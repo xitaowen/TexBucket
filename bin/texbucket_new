@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ## 0. test parameter, test sudo, test group existence
 if [ "$#" -ne 1 ]
@@ -6,7 +6,7 @@ if [ "$#" -ne 1 ]
   exit 1
 fi
 
-if [ "$EUID" -ne 0 ]
+if [ $(id -u) -ne 0 ]
   then echo "Error: $0 needs to run with root privilege"
   exit 1
 fi
@@ -31,6 +31,7 @@ if [ $? -ne 0 ]
 fi
 
 ## 2. new svn repo
+echo ${BASH_SOURCE[0]}
 TEXBUCKET_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
 cd $TEXBUCKET_DIR/repo/
 
@@ -40,7 +41,6 @@ svnadmin create $1
 umask $old_umask
 chown -R $1:$1 $1
 find $1 -type d -exec chmod g+s {} \;
-chmod g+w $1/db/rep-cache.db
 
 TEXBUCKET_DIR_SED="${TEXBUCKET_DIR//\//\\/}"
 sed -e "s/%%TEXBUCKETDIR%%/${TEXBUCKET_DIR_SED}/g" ../template/post-commit.template | sed -e "s/%%PROJECTNAME%%/$1/g" > $1/hooks/post-commit
@@ -56,7 +56,7 @@ umask $old_umask
 chown $1:$1 $1
 chmod g+s $1
 
-cp ../template/index.html.template $1/index.html
+cp $TEXBUCKET_DIR/template/index.html.template $1/index.html
 chown $1:$1 $1/index.html
 
 ## 4. test commit
@@ -68,3 +68,4 @@ cp $TEXBUCKET_DIR/template/main.tex.template ./main.tex
 cp $TEXBUCKET_DIR/template/main.bib.template ./main.bib
 svn add Makefile main.tex main.bib
 svn commit -m 'init commit'
+chmod g+w $TEXBUCKET_DIR/repo/$1/db/rep-cache.db
