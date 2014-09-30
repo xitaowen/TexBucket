@@ -1,0 +1,70 @@
+#!/bin/sh
+
+## 0. test parameter, test sudo, test group existence
+if [ "$#" -ne 1 ]
+  then echo "Usage: sudo $0 ProjectName"
+  exit 1
+fi
+
+if [ "$EUID" -ne 0 ]
+  then echo "Error: $0 needs to run with root privilege"
+  exit 1
+fi
+
+egrep -i "^${1}:" /etc/passwd
+if [ $? -eq 0 ]
+  then echo "Error: User ${1} exists already"
+  exit 1
+fi
+
+egrep -i "^${1}" /etc/group
+if [ $? -eq 0 ]
+  then echo "Error: Group ${1} exists already"
+  exit 1
+fi
+
+## 1. create group and dummy user
+useradd -M -s /sbin/nologin  $1
+if [ $? -ne 0 ]
+  then echo "Error in creating user: exit value $?"
+  exit 1
+fi
+
+## 2. new svn repo
+TEXBUCKET_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+cd $TEXBUCKET_DIR/repo/
+
+old_umask=$(umask)
+umask 0002
+svnadmin create $1
+umask $old_umask
+chown -R $1:$1 $1
+find $1 -type d -exec chmod g+s {} \;
+chmod g+w $1/db/rep-cache.db
+
+TEXBUCKET_DIR_SED="${TEXBUCKET_DIR//\//\\/}"
+sed -e "s/%%TEXBUCKETDIR%%/${TEXBUCKET_DIR_SED}/g" ../template/post-commit.template | sed -e "s/%%PROJECTNAME%%/$1/g" > $1/hooks/post-commit
+chown $1:$1 $1/hooks/post-commit
+chmod +x $1/hooks/post-commit
+
+## 3. make web dir
+cd $TEXBUCKET_DIR/www/
+old_umask=$(umask)
+umask 0002
+mkdir $1
+umask $old_umask
+chown $1:$1 $1
+chmod g+s $1
+
+cp ../template/index.html.template $1/index.html
+chown $1:$1 $1/index.html
+
+## 4. test commit
+TEMP_DIR=`mktemp -d` && cd ${TEMP_DIR}
+svn co file:///${TEXBUCKET_DIR}/repo/$1
+cd $1
+cp $TEXBUCKET_DIR/template/Makefile.template ./Makefile
+cp $TEXBUCKET_DIR/template/main.tex.template ./main.tex
+cp $TEXBUCKET_DIR/template/main.bib.template ./main.bib
+svn add Makefile main.tex main.bib
+svn commit -m 'init commit'

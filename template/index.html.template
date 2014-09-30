@@ -1,0 +1,30 @@
+<html><body>
+<h2>Index Page: TexBucket</h2>
+
+<ul>
+	<li>SVN&nbsp;logs:&nbsp;
+	<ul>
+		<li><a href="svn.log">SVN standard output</a></li>
+		<li><a href="svn2.log">SVN standard error</a></li>
+	</ul>
+	</li>
+	<li>make logs:
+	<ul>
+		<li><a href="make.log">make standard output</a></li>
+		<li><a href="make2.log">make standard error</a></li>
+	</ul>
+	</li>
+	<li>cp logs:
+	<ul>
+		<li><a href="cp.log">cp standard output</a></li>
+		<li><a href="cp2.log">cp standard error</a></li>
+	</ul>
+	</li>
+	<li>pdf link:&nbsp;
+	<ul>
+		<li><a href="main.pdf">Main PDF file</a></li>
+	</ul>
+	</li>
+</ul>
+
+</body></html>

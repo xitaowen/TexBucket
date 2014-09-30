@@ -1,0 +1,13 @@
+#!/bin/sh
+TEXBUCKET_DIR="%%TEXBUCKETDIR%%"
+PROJECT="%%PROJECTNAME%%"
+DISTFILES="main.pdf"
+TARGET_DIR="${TEXBUCKET_DIR}/www/${PROJECT}"
+LOGFILES="../svn.log ../svn2.log make.log make2.log"
+
+TEMP_DIR=`mktemp -d` && cd ${TEMP_DIR}
+svn co file:///${TEXBUCKET_DIR}/repo/${PROJECT} >svn.log 2>svn2.log
+cd $PROJECT
+make all >make.log 2>make2.log
+rm -f ${TARGET_DIR}/*.log ${TARGET_DIR}/*.pdf
+cp $DISTFILES $LOGFILES ${TARGET_DIR} >${TARGET_DIR}/cp.log 2>${TARGET_DIR}/cp2.log
