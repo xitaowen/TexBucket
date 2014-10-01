@@ -20,7 +20,7 @@ Usage
 --------------------
 1. If you want to add a repo, run `sudo texbucket_new repo_name`. 
 Next, you need to add system accounts who are allowed to edit the repo by issuing `sudo texbucket_useradd username repo_name`. 
-The repo will be then accessable via [svn+ssh://server_address/repo/name_of_your_repo](svn+ssh://server_address/repo/name_of_your_repo), and the web portal is at [http://server_address/texbucket/repo_name/index.html](http://server_address/texbucket/repo_name/index.html)
+The repo will be then accessable via `svn checkout svn+ssh://server_address/repo/name_of_your_repo`, and the web portal is at [http://server_address/texbucket/repo_name/index.html](http://server_address/texbucket/repo_name/index.html)
 
 2. To revoke the access of a system account, run `sudo textbucket_userdel username repo_name`.
 
