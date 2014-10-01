@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 ## 0. Check sudo
 if [ $(id -u) -ne 0 ]
@@ -11,8 +11,6 @@ fi
 TEXBUCKET_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $TEXBUCKET_DIR
 mkdir -p -m 755 repo
-#mkdir -p -m 755 www
-#mkdir -p -m 755 conf
 
 ## 2. Check httpd and svn
 if [ -f /etc/httpd/conf/httpd.conf ]; then 
@@ -42,17 +40,17 @@ if [ "$ISROOT" -ne 0 ]; then
 fi
 
 ## 3. Make links for dirs
-if [ "$ISROOT" -ne 0 ]; then
+if [ "$ISROOT" -ne 0 ] && [ ! -d $DOCUMENT_ROOT/texbucket ]; then
   mkdir -p -m 755 $DOCUMENT_ROOT/texbucket
   ln -s $DOCUMENT_ROOT/texbucket $TEXBUCKET_DIR/www 
   echo "TexBucket web portal linked to $DOCUMENT_ROOT/texbucket" 
 fi
 
-## 4. Make links for bins. Issues exist with symlinks.
-#if [ "$ISROOT" -ne 0 ]; then
-#  ln -s $TEXBUCKET_DIR/bin/texbucket_new /usr/local/bin/tb_new
-#  ln -s $TEXBUCKET_DIR/bin/texbucket_remove /usr/local/bin/tb_remove
-#  ln -s $TEXBUCKET_DIR/bin/texbucket_useradd /usr/local/bin/tb_useradd
-#  ln -s $TEXBUCKET_DIR/bin/texbucket_userdel /usr/local/bin/tb_userdel
-#  echo "TexBucket commands linked to /usr/local/bin/"
-#fi
+## 4. Make links for bins.
+if [ "$ISROOT" -ne 0 ]; then
+  ln -s $TEXBUCKET_DIR/bin/texbucket_new /usr/bin/texbucket_new
+  ln -s $TEXBUCKET_DIR/bin/texbucket_remove /usr/bin/texbucket_remove
+  ln -s $TEXBUCKET_DIR/bin/texbucket_useradd /usr/bin/texbucket_useradd
+  ln -s $TEXBUCKET_DIR/bin/texbucket_userdel /usr/bin/texbucket_userdel
+  echo "TexBucket commands linked to /usr/bin/"
+fi
