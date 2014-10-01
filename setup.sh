@@ -35,8 +35,8 @@ fi
 
 if [ "$ISROOT" -ne 0 ]; then
   killall svnserve
-  svnserve -d -r $TEXBUCKET_DIR/repo
-  echo "svnserve root path reset to $TEXBUCKET_DIR/repo"
+  svnserve -d
+  echo "svnserve restarted"
 fi
 
 ## 3. Make links for dirs
@@ -48,6 +48,7 @@ fi
 
 ## 4. Make links for bins.
 if [ "$ISROOT" -ne 0 ]; then
+  ln -s $TEXBUCKET_DIR/repo /repo
   ln -s $TEXBUCKET_DIR/bin/texbucket_new /usr/bin/texbucket_new
   ln -s $TEXBUCKET_DIR/bin/texbucket_remove /usr/bin/texbucket_remove
   ln -s $TEXBUCKET_DIR/bin/texbucket_useradd /usr/bin/texbucket_useradd
